@@ -30,25 +30,13 @@ if (file_exists($autoloadPath)) {
 class PaymentExample extends PaymentModule
 {
     // >>>> Main settings <<<<
-    // const CONFIG_OS_OFFLINE = 'PAYMENTEXAMPLE_OS_OFFLINE';
-    
-    // const CONFIG_PO_OFFLINE_ENABLED = 'PAYMENTEXAMPLE_PO_OFFLINE_ENABLED';
-    // const CONFIG_PO_EXTERNAL_ENABLED = 'PAYMENTEXAMPLE_PO_EXTERNAL_ENABLED';
-    // const CONFIG_PO_EMBEDDED_ENABLED = 'PAYMENTEXAMPLE_PO_EMBEDDED_ENABLED';
-    // const CONFIG_PO_BINARY_ENABLED = 'PAYMENTEXAMPLE_PO_BINARY_ENABLED';
-    
-    // const MODULE_ADMIN_CONTROLLER = 'AdminConfigurePaymentExample';
     
     const HOOKS = [
-        // 'actionPaymentCCAdd',
         'actionObjectShopAddAfter',
         'paymentOptions',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'displayCustomerAccount',
-        // 'displayOrderConfirmation',
-        // 'displayOrderDetail',
-        // 'displayPaymentByBinaries',
         'displayPaymentReturn',
         'displayPDFInvoice',
     ];
@@ -85,10 +73,6 @@ class PaymentExample extends PaymentModule
 
         $this->displayName = $this->trans('Payment Example', [], 'Modules.Paymentexample.Admin');
         $this->description = $this->trans('Description of Payment Example', [], 'Modules.Paymentexample.Admin');
-
-        if (!count(Currency::checkPaymentCurrencies($this->id))) {
-            $this->warning = $this->trans('No currency has been set for this module.', [], 'Modules.Paymentexample.Admin');
-        }
     }
 
     /**
@@ -98,9 +82,6 @@ class PaymentExample extends PaymentModule
     {
         return (bool) parent::install()
             && (bool) $this->registerHook(static::HOOKS)
-            // && $this->installOrderState()
-            // && $this->installConfiguration()
-            // && $this->installTabs()
         ;
     }
 
@@ -109,18 +90,8 @@ class PaymentExample extends PaymentModule
      */
     public function uninstall()
     {
-        return (bool) parent::uninstall()
-            // && $this->deleteOrderState()
-            // && $this->uninstallConfiguration()
-            // && $this->uninstallTabs()
-        ;
+        return (bool) parent::uninstall();
     }
-
-    // public function getContent()
-    // {
-    //     $p = new PaymentOptions();
-    //     $p::test();
-    // }
 
     // >>>> END Main settings <<<<
 
@@ -170,33 +141,10 @@ class PaymentExample extends PaymentModule
 
         $payment = new PrestaShop\Module\PaymentExample\Payment($this);
         $paymentOptions = [];
-
-        // if (Configuration::get(static::CONFIG_PO_OFFLINE_ENABLED)) {
-            $paymentOptions[] = $payment->getOfflinePaymentOption();
-        // }
-
-        /*
-        if (Configuration::get(static::CONFIG_PO_EXTERNAL_ENABLED)) {
-            $paymentOptions[] = $this->getExternalPaymentOption();
-        }
-
-        if (Configuration::get(static::CONFIG_PO_EMBEDDED_ENABLED)) {
-            $paymentOptions[] = $this->getEmbeddedPaymentOption();
-        }
-
-        if (Configuration::get(static::CONFIG_PO_BINARY_ENABLED)) {
-            $paymentOptions[] = $this->getBinaryPaymentOption();
-        }
-        */
+        $paymentOptions[] = $payment->getOfflinePaymentOption();
 
         return $paymentOptions;
     }
-
-    // public function hookPaymentReturn()
-    // {
-    //     return $this->context->smarty->fetch('module:' . $this->name . '/views/templates/frontend/return.tpl');
-    // }
-
 
     /**
      * This hook is used to display additional information on BO Order View, under Payment block
@@ -358,7 +306,7 @@ class PaymentExample extends PaymentModule
             'transaction' => $transaction,
         ]);
 
-        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPDFInvoice.tpl');
+        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPdfInvoice.tpl');
     }
 
     // >>>> END Hooks <<<<

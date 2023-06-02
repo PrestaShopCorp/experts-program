@@ -29,75 +29,31 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Payment extends AbstractPayment
 {
+    // public function getOfflinePaymentOption()
+    // {
+    //     $result = new PaymentOption();
+    //     $result->setCallToActionText($this->trans('Pay offline', [], 'Modules.Paymentexample.Payment'))
+    //         ->setAction($this->context->link->getModuleLink($this->module->name, 'validation', [], true))
+    //         ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/frontend/info.tpl'))
+    //         ->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/payment.png'));
+
+    //     return $result;
+    // }
+
+    /**
+     * Factory of PaymentOption for Offline Payment
+     *
+     * @return PaymentOption
+     */
     public function getOfflinePaymentOption()
     {
-        $result = new PaymentOption();
-        $result->setCallToActionText($this->trans('Pay offline', [], 'Modules.Paymentexample.Payment'))
-            ->setAction($this->context->link->getModuleLink($this->module->name, 'validation', [], true))
-            ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/frontend/info.tpl'))
-            ->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/payment.png'));
+        $po = new PaymentOption();
+        $po->setModuleName($this->module->name);
+        $po->setCallToActionText($this->trans('Pay offline', [], 'Modules.Paymentexample.Payment'));
+        $po->setAction($this->context->link->getModuleLink($this->module->name, 'validation', ['option' => 'offline'], true));
+        $po->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/paymentOptionOffline.tpl'));
+        $po->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/offline.png'));
 
-        return $result;
+        return $po;
     }
-
-    // public function getExternalPaymentOption()
-    // {
-    //     $externalOption = new PaymentOption();
-    //     $externalOption->setCallToActionText($this->l('Pay external'))
-    //                    ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
-    //                    ->setInputs([
-    //                         'token' => [
-    //                             'name' =>'token',
-    //                             'type' =>'hidden',
-    //                             'value' =>'123456789',
-    //                         ],
-    //                     ])
-    //                    ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/payment_infos.tpl'))
-    //                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/payment.png'));
-
-    //     return $externalOption;
-    // }
-
-    // public function getEmbeddedPaymentOption()
-    // {
-    //     $embeddedOption = new PaymentOption();
-    //     $embeddedOption->setCallToActionText($this->l('Pay embedded'))
-    //                    ->setForm($this->generateForm())
-    //                    ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/payment_infos.tpl'))
-    //                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/payment.png'));
-
-    //     return $embeddedOption;
-    // }
-
-    // public function getIframePaymentOption()
-    // {
-    //     $iframeOption = new PaymentOption();
-    //     $iframeOption->setCallToActionText($this->l('Pay iframe'))
-    //                  ->setAction($this->context->link->getModuleLink($this->name, 'iframe', array(), true))
-    //                  ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/payment_infos.tpl'))
-    //                  ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/payment.png'));
-
-    //     return $iframeOption;
-    // }
-
-    // protected function generateForm()
-    // {
-    //     $months = [];
-    //     for ($i = 1; $i <= 12; $i++) {
-    //         $months[] = sprintf("%02d", $i);
-    //     }
-
-    //     $years = [];
-    //     for ($i = 0; $i <= 10; $i++) {
-    //         $years[] = date('Y', strtotime('+'.$i.' years'));
-    //     }
-
-    //     $this->context->smarty->assign([
-    //         'action' => $this->context->link->getModuleLink($this->name, 'validation', array(), true),
-    //         'months' => $months,
-    //         'years' => $years,
-    //     ]);
-
-    //     return $this->context->smarty->fetch('module:paymentexample/views/templates/front/payment_form.tpl');
-    // }
 }
