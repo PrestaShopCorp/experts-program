@@ -35,8 +35,7 @@ class PaymentExample extends PaymentModule
         'paymentOptions',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
-        'displayPaymentReturn',
-        'displayPDFInvoice',
+        'displayPaymentReturn'
     ];
 
     public function isUsingNewTranslationSystem() {
