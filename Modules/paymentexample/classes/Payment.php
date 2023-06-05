@@ -29,17 +29,6 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Payment extends AbstractPayment
 {
-    // public function getOfflinePaymentOption()
-    // {
-    //     $result = new PaymentOption();
-    //     $result->setCallToActionText($this->trans('Pay offline', [], 'Modules.Paymentexample.Payment'))
-    //         ->setAction($this->context->link->getModuleLink($this->module->name, 'validation', [], true))
-    //         ->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/frontend/info.tpl'))
-    //         ->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/payment.png'));
-
-    //     return $result;
-    // }
-
     /**
      * Factory of PaymentOption for Offline Payment
      *

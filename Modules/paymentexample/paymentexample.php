@@ -42,14 +42,6 @@ class PaymentExample extends PaymentModule
 		return true;
 	}
 
-    protected $_html = '';
-    protected $_postErrors = [];
-
-    public $details;
-    public $owner;
-    public $address;
-    public $extra_mail_vars;
-
     public function __construct()
     {
         $this->name = 'paymentexample';
