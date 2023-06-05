@@ -30,13 +30,11 @@ if (file_exists($autoloadPath)) {
 class PaymentExample extends PaymentModule
 {
     // >>>> Main settings <<<<
-    
     const HOOKS = [
         'actionObjectShopAddAfter',
         'paymentOptions',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
-        'displayCustomerAccount',
         'displayPaymentReturn',
         'displayPDFInvoice',
     ];
@@ -92,11 +90,9 @@ class PaymentExample extends PaymentModule
     {
         return (bool) parent::uninstall();
     }
-
     // >>>> END Main settings <<<<
 
 	// >>>> Hooks <<<<
-
     /**
      * This hook called after a new Shop is created
      *
@@ -207,27 +203,6 @@ class PaymentExample extends PaymentModule
     }
 
     /**
-     * This hook is used to display information in customer account
-     *
-     * @param array $params
-     *
-     * @return string
-     */
-    public function hookDisplayCustomerAccount(array $params)
-    {
-        $this->context->smarty->assign([
-            'moduleDisplayName' => $this->displayName,
-            'moduleLogoSrc' => $this->getPathUri() . 'logo.png',
-            'transactionsLink' => $this->context->link->getModuleLink(
-                $this->name,
-                'account'
-            ),
-        ]);
-
-        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayCustomerAccount.tpl');
-    }
-
-    /**
      * This hook is used to display additional information on bottom of order confirmation page
      *
      * @param array $params
@@ -266,49 +241,6 @@ class PaymentExample extends PaymentModule
 
         return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPaymentReturn.tpl');
     }
-
-    /**
-     * This hook is used to display additional information on Invoice PDF
-     *
-     * @param array $params
-     *
-     * @return string
-     */
-    public function hookDisplayPDFInvoice(array $params)
-    {
-        if (empty($params['object'])) {
-            return '';
-        }
-
-        /** @var OrderInvoice $orderInvoice */
-        $orderInvoice = $params['object'];
-
-        if (false === Validate::isLoadedObject($orderInvoice)) {
-            return '';
-        }
-
-        $order = $orderInvoice->getOrder();
-
-        if (false === Validate::isLoadedObject($order) || $order->module !== $this->name) {
-            return '';
-        }
-
-        $transaction = '';
-
-        if ($order->getOrderPaymentCollection()->count()) {
-            /** @var OrderPayment $orderPayment */
-            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
-            $transaction = $orderPayment->transaction_id;
-        }
-
-        $this->context->smarty->assign([
-            'moduleName' => $this->name,
-            'transaction' => $transaction,
-        ]);
-
-        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPdfInvoice.tpl');
-    }
-
     // >>>> END Hooks <<<<
 
     // >>>> Internal functionallity <<<<
