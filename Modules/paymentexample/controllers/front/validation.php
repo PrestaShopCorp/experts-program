@@ -140,7 +140,7 @@ class PaymentExampleValidationModuleFrontController extends ModuleFrontControlle
         return $this->trans('Offline', [], 'Modules.Paymentexample.Validation');
     }
 
-    private function trans($id, array $parameters = [], $domain = null, $locale = null)
+    protected function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
         $parameters['legacy'] = 'htmlspecialchars';
         return $this->module->getTranslator()->trans($id, $parameters, $domain, $locale);
