@@ -63,9 +63,7 @@ class PaymentExampleValidationModuleFrontController extends ModuleFrontControlle
              (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
              $this->getOptionName(),
              null,
-             [
-                 'transaction_id' => Tools::passwdGen(), // Should be retrieved from your Payment response
-             ],
+             [],
              (int) $this->context->currency->id,
              false,
              $customer->secure_key

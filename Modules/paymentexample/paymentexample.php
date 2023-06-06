@@ -213,17 +213,8 @@ class PaymentExample extends PaymentModule
             return '';
         }
 
-        $transaction = '';
-
-        if ($order->getOrderPaymentCollection()->count()) {
-            /** @var OrderPayment $orderPayment */
-            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
-            $transaction = $orderPayment->transaction_id;
-        }
-
         $this->context->smarty->assign([
             'moduleName' => $this->name,
-            'transaction' => $transaction,
             'transactionsLink' => $this->context->link->getModuleLink(
                 $this->name,
                 'account'
