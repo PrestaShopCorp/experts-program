@@ -30,6 +30,8 @@ if (file_exists($autoloadPath)) {
 class PaymentExample extends PaymentModule
 {
     // >>>> Main settings <<<<
+    const CONFIG_OS_OFFLINE = 'PAYMENTEXAMPLE_OS_OFFLINE';
+    
     const HOOKS = [
         'actionObjectShopAddAfter',
         'paymentOptions',
@@ -71,6 +73,7 @@ class PaymentExample extends PaymentModule
     {
         return (bool) parent::install()
             && (bool) $this->registerHook(static::HOOKS)
+            && $this->installOrderState()
         ;
     }
 
@@ -79,7 +82,9 @@ class PaymentExample extends PaymentModule
      */
     public function uninstall()
     {
-        return (bool) parent::uninstall();
+        return (bool) parent::uninstall()
+            && $this->deleteOrderState()
+        ;
     }
     // >>>> END Main settings <<<<
 
@@ -240,6 +245,163 @@ class PaymentExample extends PaymentModule
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function installOrderState()
+    {
+        return $this->createOrderState(
+            static::CONFIG_OS_OFFLINE,
+            [
+                'en' => 'Awaiting offline payment',
+            ],
+            '#00ffff',
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            'awaiting-offline-payment'
+        );
+    }
+
+    /**
+     * Create custom OrderState used for payment
+     *
+     * @param string $configurationKey Configuration key used to store OrderState identifier
+     * @param array $nameByLangIsoCode An array of name for all languages, default is en
+     * @param string $color Color of the label
+     * @param bool $isLogable consider the associated order as validated
+     * @param bool $isPaid set the order as paid
+     * @param bool $isInvoice allow a customer to download and view PDF versions of his/her invoices
+     * @param bool $isShipped set the order as shipped
+     * @param bool $isDelivery show delivery PDF
+     * @param bool $isPdfDelivery attach delivery slip PDF to email
+     * @param bool $isPdfInvoice attach invoice PDF to email
+     * @param bool $isSendEmail send an email to the customer when his/her order status has changed
+     * @param string $template Only letters, numbers and underscores are allowed. Email template for both .html and .txt
+     * @param bool $isHidden hide this status in all customer orders
+     * @param bool $isUnremovable Disallow delete action for this OrderState
+     * @param bool $isDeleted Set OrderState deleted
+     *
+     * @return bool
+     */
+    private function createOrderState(
+        $configurationKey,
+        array $nameByLangIsoCode,
+        $color,
+        $isLogable = false,
+        $isPaid = false,
+        $isInvoice = false,
+        $isShipped = false,
+        $isDelivery = false,
+        $isPdfDelivery = false,
+        $isPdfInvoice = false,
+        $isSendEmail = false,
+        $template = '',
+        $isHidden = false,
+        $isUnremovable = true,
+        $isDeleted = false
+    ) {
+        $tabNameByLangId = [];
+
+        foreach ($nameByLangIsoCode as $langIsoCode => $name) {
+            foreach (Language::getLanguages(false) as $language) {
+                if (Tools::strtolower($language['iso_code']) === $langIsoCode) {
+                    $tabNameByLangId[(int) $language['id_lang']] = $name;
+                } elseif (isset($nameByLangIsoCode['en'])) {
+                    $tabNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode['en'];
+                }
+            }
+        }
+
+        $orderState = new OrderState();
+        $orderState->module_name = $this->name;
+        $orderState->name = $tabNameByLangId;
+        $orderState->color = $color;
+        $orderState->logable = $isLogable;
+        $orderState->paid = $isPaid;
+        $orderState->invoice = $isInvoice;
+        $orderState->shipped = $isShipped;
+        $orderState->delivery = $isDelivery;
+        $orderState->pdf_delivery = $isPdfDelivery;
+        $orderState->pdf_invoice = $isPdfInvoice;
+        $orderState->send_email = $isSendEmail;
+        $orderState->hidden = $isHidden;
+        $orderState->unremovable = $isUnremovable;
+        $orderState->template = $template;
+        $orderState->deleted = $isDeleted;
+        $result = (bool) $orderState->add();
+
+        if (false === $result) {
+            $this->_errors[] = sprintf(
+                'Failed to create OrderState %s',
+                $configurationKey
+            );
+
+            return false;
+        }
+
+        $result = (bool) Configuration::updateGlobalValue($configurationKey, (int) $orderState->id);
+
+        if (false === $result) {
+            $this->_errors[] = sprintf(
+                'Failed to save OrderState %s to Configuration',
+                $configurationKey
+            );
+
+            return false;
+        }
+
+        $orderStateImgPath = $this->getLocalPath() . 'views/img/orderstate/' . $configurationKey . '.png';
+
+        if (false === (bool) Tools::file_exists_cache($orderStateImgPath)) {
+            $this->_errors[] = sprintf(
+                'Failed to find icon file of OrderState %s',
+                $configurationKey
+            );
+
+            return false;
+        }
+
+        if (false === (bool) Tools::copy($orderStateImgPath, _PS_ORDER_STATE_IMG_DIR_ . $orderState->id . '.gif')) {
+            $this->_errors[] = sprintf(
+                'Failed to copy icon of OrderState %s',
+                $configurationKey
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete custom OrderState used for payment
+     * We mark them as deleted to not break passed Orders
+     *
+     * @return bool
+     */
+    private function deleteOrderState()
+    {
+        $result = true;
+
+        $orderStateCollection = new PrestaShopCollection('OrderState');
+        $orderStateCollection->where('module_name', '=', $this->name);
+        /** @var OrderState[] $orderStates */
+        $orderStates = $orderStateCollection->getAll();
+
+        foreach ($orderStates as $orderState) {
+            $orderState->deleted = true;
+            $result = $result && (bool) $orderState->save();
+        }
+
+        return $result;
     }
     // >>>> END Internal functionallity <<<<
 }

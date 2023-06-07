@@ -127,7 +127,7 @@ class PaymentExampleValidationModuleFrontController extends ModuleFrontControlle
      */
     private function getOrderState()
     {
-        return (int) Configuration::get('PS_OS_COD_VALIDATION');
+        return (int) Configuration::get(PaymentExample::CONFIG_OS_OFFLINE);
     }
 
     /**
