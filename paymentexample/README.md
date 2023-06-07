@@ -1,11 +1,14 @@
 # Example payment module
 
-## About
+## STEP #1 - Offline Payment
+This folder contains the first version of a sample payment module.
 
-This repository provides an example to kick start your own payment module development.
+### Installation
+Before you start using this module, you need to generate the composer files with `composer dump-autoload` for the first time inside this `paymentexample` folder.
 
-## License
-
-This module is released under the [Academic Free License 3.0][AFL-3.0] 
-
-[AFL-3.0]: https://opensource.org/licenses/AFL-3.0
+### Included features
+- Payment Module Main Structure
+- Basic hooks for a payment module
+- Validator controller
+- Offline payment option
+- Localization based on the new PrestaShop translation system
