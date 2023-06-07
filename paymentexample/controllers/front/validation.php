@@ -41,33 +41,35 @@ class PaymentExampleValidationModuleFrontController extends ModuleFrontControlle
                 [
                     'step' => 1,
                 ]
-            ));
+            )
+            );
         }
 
         $customer = new Customer($this->context->cart->id_customer);
 
         if (false === Validate::isLoadedObject($customer)) {
             Tools::redirect($this->context->link->getPageLink(
-                 'order',
-                 true,
-                 (int) $this->context->language->id,
-                 [
-                     'step' => 1,
-                 ]
-             ));
+                'order',
+                true,
+                (int) $this->context->language->id,
+                [
+                    'step' => 1,
+                ]
+            )
+            );
         }
 
         $this->module->validateOrder(
-             (int) $this->context->cart->id,
-             (int) $this->getOrderState(),
-             (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
-             $this->getOptionName(),
-             null,
-             [],
-             (int) $this->context->currency->id,
-             false,
-             $customer->secure_key
-         );
+            (int) $this->context->cart->id,
+            (int) $this->getOrderState(),
+            (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
+            $this->getOptionName(),
+            null,
+            [],
+            (int) $this->context->currency->id,
+            false,
+            $customer->secure_key
+        );
 
         Tools::redirect($this->context->link->getPageLink(
             'order-confirmation',
