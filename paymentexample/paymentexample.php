@@ -31,13 +31,17 @@ class PaymentExample extends PaymentModule
 {
     // >>>> Main settings <<<<
     const CONFIG_OS_OFFLINE = 'PAYMENTEXAMPLE_OS_OFFLINE';
+    const OS_EMAIL_TEMPLATES = [
+        'offline' => 'awaiting-offline-payment',
+    ];
     
     const HOOKS = [
         'actionObjectShopAddAfter',
         'paymentOptions',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
-        'displayPaymentReturn'
+        'displayPaymentReturn',
+        'actionEmailSendBefore'
     ];
 
     public function isUsingNewTranslationSystem() {
@@ -228,6 +232,19 @@ class PaymentExample extends PaymentModule
 
         return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPaymentReturn.tpl');
     }
+
+    /**
+     * This hook is used to refactor the email template path.
+     *
+     * @param array $params
+     *
+     */
+    public function hookActionEmailSendBefore(array $params)
+    {
+        if($params['template'] == self::OS_EMAIL_TEMPLATES['offline']) {
+            $params['templatePath'] = _PS_MODULE_DIR_ . "{$this->name}/mails/";
+        }
+    }
     // >>>> END Hooks <<<<
 
     // >>>> Internal functionallity <<<<
@@ -266,7 +283,7 @@ class PaymentExample extends PaymentModule
             false,
             false,
             true,
-            'awaiting-offline-payment'
+            self::OS_EMAIL_TEMPLATES['offline']
         );
     }
 
