@@ -1,0 +1,30 @@
+ps_controller_tabs_moduleexampleconfigure:
+  path: /configure-moduleexample
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\ModuleExample\Controller\Admin\ModuleExampleConfigureController::indexAction'
+    _legacy_controller: 'AdminModuleExampleControllerTabsConfigure'
+    _legacy_link: 'AdminModuleExampleControllerTabsConfigure'
+
+ps_controller_form_moduleexample:
+  path: /form-moduleexample
+  methods: [GET, POST]
+  defaults:
+    _controller: 'PrestaShop\ModuleExample\Controller\ModuleExampleFormController::index'
+    _legacy_controller: AdminModuleExampleControllerForm
+    _legacy_link: AdminModuleExampleControllerForm
+demo_grid_index_moduleexample:
+    path: /demogrid-moduleexample
+    methods: [GET]
+    defaults:
+        _controller: 'PrestaShop\ModuleExample\Controller\Admin\ModuleExampleGridController::indexAction'
+        _legacy_controller: 'AdminModuleExampleDemoGrid'
+        _legacy_link: 'AdminModuleExampleDemoGrid'
+
+demo_grid_search_moduleexample:
+    path: /demogrid-moduleexample
+    methods: [POST]
+    defaults:
+        _controller: 'PrestaShop\ModuleExample\Controller\Admin\ModuleExampleGridController::searchAction'
+        _legacy_controller: 'AdminModuleExampleDemoGrid'
+        _legacy_link: 'AdminModuleExampleDemoGrid:search'
