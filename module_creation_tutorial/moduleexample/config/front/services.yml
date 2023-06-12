@@ -1,6 +1,0 @@
-services:
-  _defaults:
-    public: true
-
-  presta_shop.module_example.module_example_service:
-    class: PrestaShop\ModuleExample\ModuleExampleService
