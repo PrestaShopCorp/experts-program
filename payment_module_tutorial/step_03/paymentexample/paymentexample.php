@@ -49,7 +49,8 @@ class PaymentExample extends PaymentModule
         'displayPaymentReturn',
         'actionEmailSendBefore',
         'displayOrderConfirmation',
-        'displayOrderDetail'
+        'displayOrderDetail',
+        'displayPDFInvoice'
     ];
 
     public function isUsingNewTranslationSystem() {
@@ -357,6 +358,48 @@ class PaymentExample extends PaymentModule
         ]);
 
         return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayOrderDetail.tpl');
+    }
+
+    /**
+     * This hook is used to display additional information on Invoice PDF
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayPDFInvoice(array $params)
+    {
+        if (empty($params['object'])) {
+            return '';
+        }
+
+        /** @var OrderInvoice $orderInvoice */
+        $orderInvoice = $params['object'];
+
+        if (false === Validate::isLoadedObject($orderInvoice)) {
+            return '';
+        }
+
+        $order = $orderInvoice->getOrder();
+
+        if (false === Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        $transaction = '';
+
+        if ($order->getOrderPaymentCollection()->count()) {
+            /** @var OrderPayment $orderPayment */
+            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+            $transaction = $orderPayment->transaction_id;
+        }
+
+        $this->context->smarty->assign([
+            'moduleName' => $this->name,
+            'transaction' => $transaction,
+        ]);
+
+        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayPDFInvoice.tpl');
     }
     // >>>> END Hooks <<<<
 
