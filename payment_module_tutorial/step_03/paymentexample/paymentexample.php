@@ -97,7 +97,7 @@ class PaymentExample extends PaymentModule
         return (bool) parent::uninstall()
             && $this->deleteOrderState()
             && $this->uninstallConfiguration()
-            && $this->uninstallTabs();
+            && $this->uninstallTabs()
         ;
     }
 

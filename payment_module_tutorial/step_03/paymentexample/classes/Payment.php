@@ -46,8 +46,27 @@ class Payment extends AbstractPayment
         return $po;
     }
 
+    /**
+     * Factory of PaymentOption for External Payment
+     *
+     * @return PaymentOption
+     */
     public function getExternalPaymentOption()
     {
-        return [];
+        $po = new PaymentOption();
+        $po->setModuleName($this->module->name);
+        $po->setCallToActionText($this->trans('Pay external', [], 'Modules.Paymentexample.Payment'));
+        $po->setAction($this->context->link->getModuleLink($this->module->name, 'external', [], true));
+        $po->setInputs([
+            'token' => [
+                'name' => 'token',
+                'type' => 'hidden',
+                'value' => '[5cbfniD+(gEV<59lYbG/,3VmHiE<U46;#G9*#NP#X.FA§]sb%ZG?5Q{xQ4#VM|7',
+            ],
+        ]);
+        $po->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/paymentOptionExternal.tpl'));
+        $po->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/external.png'));
+
+        return $po;
     }
 }
