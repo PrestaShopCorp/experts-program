@@ -18,5 +18,5 @@
  *}
 
 <section id="paymentexample-external">
-  <p>{l s='External payment like redirection to external secured payment page : Order will be created with OrderState "Remote payment accepted".' mod='paymentexample'}</p>
+  <p>{l s='External payment like redirection to external secured payment page : Order will be created with OrderState "Remote payment accepted".' d='Modules.Paymentexample.paymentOptionExternal'}</p>
 </section>

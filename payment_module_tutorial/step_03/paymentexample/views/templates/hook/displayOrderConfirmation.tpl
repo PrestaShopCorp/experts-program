@@ -17,17 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{extends "$layout"}
-
-{block name="content"}
-  <section id="paymentexample-external" class="card card-block mb-2">
-    <p>{l s='This page simulate an external payment gateway : Order will be created with OrderState "Remote payment accepted".' d='Modules.Paymentexample.External'}</p>
-    <form action="{$action}" method="post" class="form-horizontal mb-1">
-      <div class="text-sm-center">
-        <button type="submit" class="btn btn-primary">
-          {l s='Pay' d='Modules.Paymentexample.External'}
-        </button>
-      </div>
-    </form>
+{if !empty($transaction)}
+  <section id="{$moduleName}-displayOrderConfirmation">
+    <p>{l s='Your transaction reference is %transaction%.' d='Modules.Paymentexample.DisplayOrderConfirmation' sprintf=['%transaction%' => $transaction]}</p>
   </section>
-{/block}
+{/if}

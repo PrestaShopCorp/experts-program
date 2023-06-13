@@ -18,6 +18,9 @@
  *}
 
 <section id="{$moduleName}-displayPaymentReturn">
+  {if !empty($transaction)}
+    <p>{l s='Your transaction reference is %transaction%.' d='Modules.Paymentexample.DisplayPaymentReturn' sprintf=['%transaction%' => $transaction]}</p>
+  {/if}
   {if $customer.is_logged && !$customer.is_guest}
     <p><a href="{$transactionsLink}">{l s='See all previous transactions in your account.' d='Modules.Paymentexample.DisplayPaymentReturn'}</a></p>
   {/if}

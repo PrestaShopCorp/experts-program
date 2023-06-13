@@ -47,7 +47,9 @@ class PaymentExample extends PaymentModule
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'displayPaymentReturn',
-        'actionEmailSendBefore'
+        'actionEmailSendBefore',
+        'displayOrderConfirmation',
+        'displayOrderDetail'
     ];
 
     public function isUsingNewTranslationSystem() {
@@ -68,7 +70,11 @@ class PaymentExample extends PaymentModule
         ];
 
         $this->bootstrap = true;
-        $this->controllers = ['validation'];
+        $this->controllers = [
+            'account',
+            'external',
+            'validation',
+        ];
         
         parent::__construct();
 
@@ -248,8 +254,17 @@ class PaymentExample extends PaymentModule
             return '';
         }
 
+        $transaction = '';
+
+        if ($order->getOrderPaymentCollection()->count()) {
+            /** @var OrderPayment $orderPayment */
+            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+            $transaction = $orderPayment->transaction_id;
+        }
+
         $this->context->smarty->assign([
             'moduleName' => $this->name,
+            'transaction' => $transaction,
             'transactionsLink' => $this->context->link->getModuleLink(
                 $this->name,
                 'account'
@@ -270,6 +285,78 @@ class PaymentExample extends PaymentModule
         if($params['template'] == self::OS_EMAIL_TEMPLATES['offline']) {
             $params['templatePath'] = _PS_MODULE_DIR_ . "{$this->name}/mails/";
         }
+    }
+
+    /**
+     * This hook is used to display additional information on order confirmation page
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderConfirmation(array $params)
+    {
+        if (empty($params['order'])) {
+            return '';
+        }
+
+        /** @var Order $order */
+        $order = $params['order'];
+
+        if (false === Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        $transaction = '';
+
+        if ($order->getOrderPaymentCollection()->count()) {
+            /** @var OrderPayment $orderPayment */
+            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+            $transaction = $orderPayment->transaction_id;
+        }
+
+        $this->context->smarty->assign([
+            'moduleName' => $this->name,
+            'transaction' => $transaction,
+        ]);
+
+        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayOrderConfirmation.tpl');
+    }
+
+    /**
+     * This hook is used to display additional information on FO (Guest Tracking and Account Orders)
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderDetail(array $params)
+    {
+        if (empty($params['order'])) {
+            return '';
+        }
+
+        /** @var Order $order */
+        $order = $params['order'];
+
+        if (false === Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        $transaction = '';
+
+        if ($order->getOrderPaymentCollection()->count()) {
+            /** @var OrderPayment $orderPayment */
+            $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+            $transaction = $orderPayment->transaction_id;
+        }
+
+        $this->context->smarty->assign([
+            'moduleName' => $this->name,
+            'transaction' => $transaction,
+        ]);
+
+        return $this->context->smarty->fetch('module:paymentexample/views/templates/hook/displayOrderDetail.tpl');
     }
     // >>>> END Hooks <<<<
 

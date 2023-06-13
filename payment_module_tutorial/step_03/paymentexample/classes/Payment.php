@@ -65,7 +65,7 @@ class Payment extends AbstractPayment
             ],
         ]);
         $po->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/paymentOptionExternal.tpl'));
-        $po->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/external.png'));
+        $po->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/external.png'));
 
         return $po;
     }
