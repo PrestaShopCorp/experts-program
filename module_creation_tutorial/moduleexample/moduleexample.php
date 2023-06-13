@@ -25,6 +25,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\ModuleExample\Controller\Admin\ModuleExampleConfigureController;
+use PrestaShop\ModuleExample\Domain\Command\AddExtensionCommand;
+use PrestaShop\ModuleExample\Domain\Command\EditExtensionCommand;
+use PrestaShop\ModuleExample\Entity\ModuleExampleCategoryExtension;
+
+use PrestaShopBundle\Form\Admin\Type\TranslatableType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class ModuleExample extends Module implements WidgetInterface
 {
@@ -35,9 +41,10 @@ class ModuleExample extends Module implements WidgetInterface
         $this->tab = 'front_office_features';
         $this->version = '1.0.0';
         $this->author = 'PrestaShop';
-		$this->displayName = $this->trans('Module example', [], 'Modules.ModuleExample.ModuleExample');
+		$this->displayName = $this->trans('Module example', [], 'Modules.ModuleExample.Admin');
 
         //Not required attributes
+        $this->description = $this->trans('Description of Module Example', [], 'Modules.ModuleExample.Admin');
         $this->bootstrap = true;
         $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
         $tabNames = [];
@@ -48,7 +55,10 @@ class ModuleExample extends Module implements WidgetInterface
         foreach (Language::getLanguages(true) as $lang) {
             $tabNamesForm[$lang['locale']] = $this->trans('Module example Form', [], 'Modules.ModuleExample.Admin', $lang['locale']);
         }
-
+        $tabNamesGrid = [];
+        foreach (Language::getLanguages(true) as $lang) {
+            $tabNamesGrid[$lang['locale']] = $this->trans('Module example Grid', [], 'Modules.ModuleExample.Admin', $lang['locale']);
+        }
         $this->tabs = [
             [
                 'route_name' => 'ps_controller_tabs_moduleexampleconfigure',
@@ -66,6 +76,14 @@ class ModuleExample extends Module implements WidgetInterface
                 'icon' => 'school',
                 'parent_class_name' => 'IMPROVE',
             ],
+            [
+                'route_name' => 'demo_grid_index_moduleexample',
+                'class_name' => 'AdminModuleExampleDemoGrid',
+                'visible' => true,
+                'name' => $tabNamesGrid,
+                'icon' => 'school',
+                'parent_class_name' => 'IMPROVE',
+            ],
         ];
         parent::__construct();
     }
@@ -75,15 +93,20 @@ class ModuleExample extends Module implements WidgetInterface
     public function install(): bool
     {
         return parent::install() 
+		&& $this->installDb()		
         && $this->registerHook('displayHome') 
         && $this->registerHook('displayFooter') 
-        && $this->registerHook('actionFrontControllerSetMedia');
+        && $this->registerHook('actionFrontControllerSetMedia')
+		&& $this->registerHook('actionCategoryFormBuilderModifier')
+		&& $this->registerHook('actionAfterCreateCategoryFormHandler')
+		&& $this->registerHook('actionAfterUpdateCategoryFormHandler');
     }
     /**
      * @return bool
      */
     public function uninstall()
     {
+    	$this->uninstallDb();
         return parent::uninstall();
     }
     public function hookDisplayHome($params)
@@ -129,6 +152,79 @@ class ModuleExample extends Module implements WidgetInterface
             ]
         );
     }
+    public function hookActionCategoryFormBuilderModifier($params)
+    {
+        $formBuilder = $params['form_builder'];
+        $formBuilder->add('additional_field', TranslatableType::class, [
+            'type' => TextareaType::class,
+            'label' => $this->trans('Category extension', [], 'Modules.ModuleExample.Admin'),
+            'required' => false,
+        ]);
+		if(isset($params['id']) && $params['id']>0){
+            $entityManager = $this->get('doctrine.orm.entity_manager');
+			$extensionRepository = $entityManager->getRepository(ModuleExampleCategoryExtension::class);
+	        $languages = Language::getLanguages(false);
+	        $id_category = $params['id'];
+
+			$additional_field = [];
+	        foreach ($languages as $lang) {
+	        	$id_lang = $lang['id_lang'];
+	        	$extension = $extensionRepository->findOneBy(['id_category' => $id_category,'id_lang' => $id_lang]);
+				 if(!is_null($extension)){
+					$additionalField=$extension->getAdditionalField();
+					$additional_field[$id_lang]=$additionalField;
+				 }
+			}
+			$params['data']['additional_field']=$additional_field;
+		}
+        $formBuilder->setData($params['data']);
+    }
+    public function hookActionAfterCreateCategoryFormHandler($params)
+    {
+        $this->updateCategoryExtension($params);
+    }
+    public function hookActionAfterUpdateCategoryFormHandler($params)
+    {
+    	$this->updateCategoryExtension($params);
+	}
+    public function updateCategoryExtension($params)
+    {
+        $entityManager = $this->get('doctrine.orm.entity_manager');
+        $extensionRepository = $entityManager->getRepository(ModuleExampleCategoryExtension::class);
+		$id_category = $params['id'];
+		$additional_field = $params['form_data']['additional_field'];
+		$extension = $extensionRepository->findOneBy(['id_category'=>(int)$id_category]);
+
+		if(is_null($extension)){
+			foreach ($additional_field as $key => $additionalLangField) {
+		        try{
+		            $extension = new ModuleExampleCategoryExtension();
+		            $extension->setIdCategory($id_category);
+					$extension->setAdditionalField($additionalLangField);
+					$extension->setIdLang($key);
+					$entityManager->persist($extension);
+			        $entityManager->flush();	
+		        }
+		        catch(\Exception $e){
+		                sprintf('Failed to add the extension');
+		        }
+			}
+		}
+		else {
+			foreach ($additional_field as $key => $additionalLangField) {
+				try{
+					$extension = $extensionRepository->findOneBy(['id_category' => $id_category,'id_lang' => $key]);
+					$extension->setAdditionalField($additionalLangField);
+					$entityManager->persist($extension);
+			        $entityManager->flush();	
+		        }
+		        catch(\Exception $e){
+		                sprintf('Failed to modify extension');
+		        }
+			}
+		}
+    }
+	
     public function getContent()
     {
         // >>> You can uncomment to see how it works <<<
@@ -298,5 +394,20 @@ class ModuleExample extends Module implements WidgetInterface
 		
         return $subscribers;
     }
+    private function installDb()
+    {
+        return Db::getInstance()->execute('
+	        CREATE TABLE `' . _DB_PREFIX_ . 'meseconddesc` (
+			  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+			  `id_category` int(10) UNSIGNED DEFAULT NULL,
+			  `id_lang` int(10) UNSIGNED DEFAULT NULL,
+			  `additional_field` text DEFAULT NULL,
+			  PRIMARY KEY(`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
+    }
 
+    private function uninstallDb()
+    {
+        Db::getInstance()->execute('DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'meseconddesc');
+    }
 }
