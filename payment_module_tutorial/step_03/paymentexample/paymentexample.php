@@ -72,9 +72,8 @@ class PaymentExample extends PaymentModule
 
         $this->bootstrap = true;
         $this->controllers = [
-            'account',
             'external',
-            'validation',
+            'validation'
         ];
         
         parent::__construct();
