@@ -95,7 +95,7 @@ class Payment extends AbstractPayment
     private function generateEmbeddedForm()
     {
         $this->context->smarty->assign([
-            'action' => $this->context->link->getModuleLink($this->name, 'validation', ['option' => 'embedded'], true),
+            'action' => $this->context->link->getModuleLink($this->module->name, 'validation', ['option' => 'embedded'], true),
         ]);
 
         return $this->context->smarty->fetch('module:paymentexample/views/templates/front/paymentOptionEmbeddedForm.tpl');
