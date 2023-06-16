@@ -75,14 +75,14 @@ class Payment extends AbstractPayment
      *
      * @return PaymentOption
      */
-    private function getEmbeddedPaymentOption()
+    public function getEmbeddedPaymentOption()
     {
         $po = new PaymentOption();
         $po->setModuleName($this->module->name);
         $po->setCallToActionText($this->trans('Pay embedded', [], 'Modules.Paymentexample.Payment'));
         $po->setForm($this->generateEmbeddedForm());
         $po->setAdditionalInformation($this->context->smarty->fetch('module:paymentexample/views/templates/front/paymentOptionEmbedded.tpl'));
-        $po->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/embedded.png'));
+        $po->setLogo(\Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/option/embedded.png'));
 
         return $po;
     }
