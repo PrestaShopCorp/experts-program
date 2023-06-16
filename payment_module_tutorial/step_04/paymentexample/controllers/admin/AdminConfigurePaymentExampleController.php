@@ -47,6 +47,13 @@ class AdminConfigurePaymentExampleController extends ModuleAdminController
                         'validation' => 'isBool',
                         'cast' => 'intval',
                         'required' => false,
+                    ],
+                    PaymentExample::CONFIG_PO_EMBEDDED_ENABLED => [
+                        'type' => 'bool',
+                        'title' => $this->l('Allow to pay with embedded method'),
+                        'validation' => 'isBool',
+                        'cast' => 'intval',
+                        'required' => false,
                     ]
                 ],
                 'submit' => [
