@@ -92,7 +92,7 @@ class Payment extends AbstractPayment
      *
      * @return PaymentOption
      */
-    private function getBinaryPaymentOption()
+    public function getBinaryPaymentOption()
     {
         $po = new PaymentOption();
         $po->setModuleName($this->module->name);
