@@ -17,6 +17,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="paymentexample-embedded">
-  <p>{l s='Embedded payment will add additional information in OrderPayment with data retrieved from form below ; Order will be created with OrderState "Payment accepted".' d='Modules.Paymentexample.paymentOptionEmbedded'}</p>
+<section id="{$moduleName}-displayPaymentReturn">
+  {if !empty($transaction)}
+    <p>{l s='Your transaction reference is %transaction%.' d='Modules.Paymentexample.DisplayPaymentReturn' sprintf=['%transaction%' => $transaction]}</p>
+  {/if}
+  {if $customer.is_logged && !$customer.is_guest}
+    <p><a href="{$transactionsLink}">{l s='See all previous transactions in your account.' d='Modules.Paymentexample.DisplayPaymentReturn'}</a></p>
+  {/if}
 </section>
+

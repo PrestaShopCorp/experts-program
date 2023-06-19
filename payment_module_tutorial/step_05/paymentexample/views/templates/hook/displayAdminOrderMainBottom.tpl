@@ -17,6 +17,16 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="paymentexample-embedded">
-  <p>{l s='Embedded payment will add additional information in OrderPayment with data retrieved from form below ; Order will be created with OrderState "Payment accepted".' d='Modules.Paymentexample.paymentOptionEmbedded'}</p>
+<section id="{$moduleName}-displayAdminOrderMainBottom">
+  <div class="card mt-2">
+    <div class="card-header">
+      <h3 class="card-header-title">
+        <img src="{$moduleLogoSrc}" alt="{$moduleDisplayName}" width="20" height="20">
+        {$moduleDisplayName}
+      </h3>
+    </div>
+    <div class="card-body">
+      <p>{l s='This order has been paid with %moduleDisplayName%.' d='Modules.Paymentexample.DisplayAdminOrderMainBottom' sprintf=['%moduleDisplayName%' => $moduleDisplayName]}</p>
+    </div>
+  </div>
 </section>

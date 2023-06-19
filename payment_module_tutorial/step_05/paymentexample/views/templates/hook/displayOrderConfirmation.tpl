@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="paymentexample-embedded">
-  <p>{l s='Embedded payment will add additional information in OrderPayment with data retrieved from form below ; Order will be created with OrderState "Payment accepted".' d='Modules.Paymentexample.paymentOptionEmbedded'}</p>
-</section>
+{if !empty($transaction)}
+  <section id="{$moduleName}-displayOrderConfirmation">
+    <p>{l s='Your transaction reference is %transaction%.' d='Modules.Paymentexample.DisplayOrderConfirmation' sprintf=['%transaction%' => $transaction]}</p>
+  </section>
+{/if}

@@ -54,6 +54,13 @@ class AdminConfigurePaymentExampleController extends ModuleAdminController
                         'validation' => 'isBool',
                         'cast' => 'intval',
                         'required' => false,
+                    ],
+                    PaymentExample::CONFIG_PO_BINARY_ENABLED => [
+                        'type' => 'bool',
+                        'title' => $this->trans('Allow to pay with binary method', [], 'Modules.Paymentexample.Configuration'),
+                        'validation' => 'isBool',
+                        'cast' => 'intval',
+                        'required' => false,
                     ]
                 ],
                 'submit' => [

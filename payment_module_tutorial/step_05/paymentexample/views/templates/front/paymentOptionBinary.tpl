@@ -17,6 +17,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="paymentexample-embedded">
-  <p>{l s='Embedded payment will add additional information in OrderPayment with data retrieved from form below ; Order will be created with OrderState "Payment accepted".' d='Modules.Paymentexample.paymentOptionEmbedded'}</p>
+<section id="paymentexample-binary">
+  <p>{l s='Binary payment : Order will be created with OrderState "Payment accepted".' d='Modules.Paymentexample.paymentOptionBinary'}</p>
 </section>
