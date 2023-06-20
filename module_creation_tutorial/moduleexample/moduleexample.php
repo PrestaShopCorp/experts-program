@@ -213,7 +213,7 @@ class ModuleExample extends Module implements WidgetInterface
 		else {
 			foreach ($additional_field as $key => $additionalLangField) {
 				try{
-					$extension = $extensionRepository->findOneBy(['id_category' => $id_category,'id_lang' => $key]);
+					$extension = $extensionRepository->findOneBy(['id_category' => (int)$id_category,'id_lang' => $key]);
 					$extension->setAdditionalField($additionalLangField);
 					$entityManager->persist($extension);
 			        $entityManager->flush();	
