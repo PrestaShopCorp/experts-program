@@ -1,7 +1,7 @@
 # Example payment module
 
-## STEP #3 - External Payment
-This step add a new payment method introducing more concepts about creating a payment module like transaction ID.
+## STEP #7 - Account Page
+Adding payment page into My Account section.
 
 ### Installation
 Before you start using this module, you need to generate the composer files with `composer dump-autoload` for the first time inside the `paymentexample` folder.

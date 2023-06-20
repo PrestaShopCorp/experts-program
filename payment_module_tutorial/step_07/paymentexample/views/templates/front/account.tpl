@@ -27,24 +27,33 @@
   {if $orderPayments}
     <table class="table table-striped table-bordered hidden-sm-down">
       <thead class="thead-default">
-      <tr>
-        <th>{l s='Order reference' d='Modules.Paymentexample.Account'}</th>
-        <th>{l s='Payment method' d='Modules.Paymentexample.Account'}</th>
-        <th>{l s='Transaction reference' d='Modules.Paymentexample.Account'}</th>
-        <th>{l s='Amount' d='Modules.Paymentexample.Account'}</th>
-        <th>{l s='Date' d='Modules.Paymentexample.Account'}</th>
-      </tr>
+        <tr>
+          <th>{l s='Order reference' d='Modules.Paymentexample.Account'}</th>
+          <th>{l s='Payment method' d='Modules.Paymentexample.Account'}</th>
+          <th>{l s='Transaction reference' d='Modules.Paymentexample.Account'}</th>
+          <th>{l s='Amount' d='Modules.Paymentexample.Account'}</th>
+          <th>{l s='Date' d='Modules.Paymentexample.Account'}</th>
+        </tr>
       </thead>
       <tbody>
-      {foreach from=$orderPayments item=orderPayment}
-        <tr>
-          <td>{$orderPayment.order_reference}</td>
-          <td>{$orderPayment.payment_method}</td>
-          <td>{$orderPayment.transaction_id}</td>
-          <td>{$orderPayment.amount_formatted}</td>
-          <td>{$orderPayment.date_formatted}</td>
-        </tr>
-      {/foreach}
+        {foreach from=$orderPayments item=orderPayment}
+          <tr>
+            <td>{$orderPayment.order_reference}</td>
+            <td>{$orderPayment.payment_method}</td>
+            <td>
+              {$orderPayment.transaction_id}
+              {if $orderPayment.card_number}
+                <p class="mt-1 mb-0">{l s='Card information' d='Modules.Paymentexample.Account'}</p>
+                {$orderPayment.card_number}<br>
+                {$orderPayment.card_brand}<br>
+                {$orderPayment.card_expiration}<br>
+                {$orderPayment.card_holder}<br>
+              {/if}
+            </td>
+            <td>{$orderPayment.amount_formatted}</td>
+            <td>{$orderPayment.date_formatted}</td>
+          </tr>
+        {/foreach}
       </tbody>
     </table>
   {else}
