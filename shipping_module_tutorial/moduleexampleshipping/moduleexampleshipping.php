@@ -40,7 +40,7 @@ class ModuleExampleShipping extends CarrierModule
         //Not required attributes
         $this->description = $this->trans('Description of Module Example Shipping', [], 'Modules.ModuleExampleShipping.Admin');
         $this->bootstrap = true;
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
 
         parent::__construct();
         $this->confirmUninstall = $this->l('Are You sure?');
