@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>moduleexampleshipping</name>
+    <displayName><![CDATA[Module example Shipping]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Description of Module Example Shipping]]></description>
+    <author><![CDATA[PrestaShop]]></author>
+    <tab><![CDATA[shipping_logistics]]></tab>
+	<confirmUninstall><![CDATA[Are You sure?]]></confirmUninstall>
+    <is_configurable>0</is_configurable>
+    <need_instance>1</need_instance>
+</module>

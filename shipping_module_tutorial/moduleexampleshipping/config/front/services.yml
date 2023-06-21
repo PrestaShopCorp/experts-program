@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    public: true
+    
+  prestashop.moduleexampleshipping.repository.moduleexampleshipping_repository:
+    class: PrestaShop\ModuleExampleShipping\Repository\ModuleExampleShippingRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - PrestaShop\ModuleExampleShipping\Entity\ModuleExampleShippingEntity
