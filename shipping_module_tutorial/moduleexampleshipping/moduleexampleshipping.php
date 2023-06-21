@@ -174,15 +174,17 @@ class ModuleExampleShipping extends CarrierModule
         $moduleExampleShippingRepository = $this->get('prestashop.moduleexampleshipping.repository.moduleexampleshipping_repository');
 
 		$id_cart=$this->context->cart->id;
-        $data = $moduleExampleShippingRepository->findOneBy(['cart_id'=>$id_cart]);
-        if(is_null($data)){
-            $newData = new ModuleExampleShippingEntity();
-			$newData->setCart($id_cart);
-			$newData->setPrice($cost);
-			$entityManager->persist($newData);
-			$entityManager->flush();
-        }else{
-            $edition_mode = true;
+        if($id_cart){
+            $data = $moduleExampleShippingRepository->findOneBy(['cart_id'=>$id_cart]);
+            if(is_null($data)){
+                $newData = new ModuleExampleShippingEntity();
+                $newData->setCart($id_cart);
+                $newData->setPrice($cost);
+                $entityManager->persist($newData);
+                $entityManager->flush();
+            }else{
+                $edition_mode = true;
+            }
         }
       return $shipping_cost+$cost;
     }
