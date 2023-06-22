@@ -51,6 +51,7 @@ class ModuleExampleShipping extends CarrierModule
         return parent::install()
         && $this->installDb()
         && $this->installNewCarrier()
+        && $this->registerHook('actionCarrierUpdate')
         && $this->registerHook('displayAfterCarrier')
         && $this->registerHook('displayAdminOrderSideBottom');
     }
@@ -134,6 +135,14 @@ class ModuleExampleShipping extends CarrierModule
             Configuration::updateValue('ModuleExampleShippingCarrierId', $carrier->id);
         }
         return true;
+    }
+    public function hookActionCarrierUpdate($params)
+    {
+        $id_carrier_old = (int) $params['id_carrier'];
+        $id_carrier_new = (int) $params['carrier']->id;
+        if ($id_carrier_old === (int) Configuration::get('ModuleExampleShippingCarrierId')) {
+            Configuration::updateValue('ModuleExampleShippingCarrierId', $id_carrier_new);
+        }
     }
     public function hookDisplayAfterCarrier($params)
     {
