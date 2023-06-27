@@ -55,8 +55,7 @@ class PaymentExampleValidationModuleFrontController extends ModuleFrontControlle
                 [
                     'step' => 1,
                 ]
-            )
-            );
+            ));
         }
 
         $this->module->validateOrder(
