@@ -26,7 +26,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use PrestaShop\ModuleExampleShipping\Entity\ModuleExampleShippingEntity;
 
-class ModuleExampleShipping extends CarrierModule
+class ModuleExampleShipping extends CarrierModule implements WidgetInterface
 {
     public function __construct()
     {
@@ -53,6 +53,7 @@ class ModuleExampleShipping extends CarrierModule
         && $this->installNewCarrier()
         && $this->registerHook('actionCarrierUpdate')
         && $this->registerHook('displayAfterCarrier')
+		&& $this->registerHook('displayCarrierExtraContent')
         && $this->registerHook('displayAdminOrderSideBottom');
     }
     public function uninstall()
@@ -152,6 +153,14 @@ class ModuleExampleShipping extends CarrierModule
         ]);
         return $this->fetch('module:moduleexampleshipping/views/templates/hook/displayAfterCarrier.tpl');
     }
+    public function hookDisplayCarrierExtraContent($params)
+    {
+    	$products=$this->context->cart->getProducts();	
+        $this->smarty->assign([
+        	'products' => $products
+        ]);
+        return $this->fetch('module:moduleexampleshipping/views/templates/hook/displayAfterCarrier.tpl');
+    }
     public function hookdisplayAdminOrderSideBottom($params)
     {
         $order = new Order((int)$params['id_order']);
@@ -200,5 +209,23 @@ class ModuleExampleShipping extends CarrierModule
     public function getOrderShippingCostExternal($params)
     {	
       return 10;
+    }
+    public function renderWidget($hookName, array $configuration)
+    {
+		$this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
+        return $this->fetch('module:moduleexampleshipping/views/templates/hook/displayLeftColumn.tpl');
+    }
+    public function getWidgetVariables($hookName, array $configuration)
+    {
+    	$products=$this->context->cart->getProducts();	
+		$cost=0;
+		foreach ($products as $product) {
+			$cost += ($product['cart_quantity'] ? $product['cart_quantity']*10 : 0); 
+		}
+        //Widget variables
+        return [
+            'shipping_cost' => $cost,
+            'currency' => $this->context->currency->symbol
+        ]; 
     }
 }
